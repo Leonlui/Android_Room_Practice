@@ -2,6 +2,7 @@ package com.example.roomdatabasepractice.fragments.list
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.ProxyFileDescriptorCallback
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.roomdatabasepractice.R
 import com.example.roomdatabasepractice.viewmodel.UserViewModel
 import com.example.roomdatabasepractice.databinding.FragmentListBinding
+import com.example.roomdatabasepractice.model.User
 
 class ListFragment : Fragment() {
 
@@ -29,6 +31,7 @@ class ListFragment : Fragment() {
 
         //Recyclerview
         val adapter = ListAdapter()
+        adapter.setOnDeleteItem { deleteUser(it) }
         val recyclerView = binding.recyclerView
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -69,14 +72,20 @@ class ListFragment : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("Yes") { _, _ ->
             userViewModel.deleteAllUser()
-            Toast.makeText(requireContext(),
+            Toast.makeText(
+                requireContext(),
                 "Successfully removed everything",
-                Toast.LENGTH_SHORT)
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
         builder.setNegativeButton("No") { _, _ -> }
         builder.setTitle("Delete all users?")
         builder.setMessage("Are you sure you want to delete all users?")
         builder.create().show()
+    }
+
+    private fun deleteUser(user: User) {
+        userViewModel.deleteUser(user)
     }
 }
